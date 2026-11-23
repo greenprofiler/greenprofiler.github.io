@@ -3,57 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Green Profiler - Universal Process-Level Energy & Code Quality Profiler</title>
-  <meta name="description" content="High-performance, zero-dependency process-level energy profiler and static code quality analyzer built with Rust Native Architecture.">
+  <title>Green Profiler — Process-Level Energy & Code Quality Profiler</title>
+  <meta name="description" content="A zero-config, blazing fast energy and code quality profiler for modern engineering teams.">
   <link rel="icon" type="image/png" href="assets/leaf.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f293d;
-      --card-hover: #1e293b;
-      --text: #f3f4f6;
-      --text-muted: #94a3b8;
-      --primary: #10b981;
-      --primary-hover: #059669;
-      --primary-glow: rgba(16, 185, 129, 0.15);
-      --code-bg: #070b14;
-      --code-border: #1e293b;
+      --bg: #090c10;
+      --card-bg: #11151c;
+      --card-sub: #0d1117;
+      --border: #1f2733;
+      --border-subtle: #171d26;
+      --text: #f0f3f6;
+      --text-muted: #8b949e;
+      --text-dim: #6e7681;
+      --accent: #10b981;
+      --accent-light: #34d399;
+      --accent-glow: rgba(16, 185, 129, 0.16);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(16, 185, 129, 0.14), transparent 70%),
+        radial-gradient(ellipse 50% 30% at 85% 50%, rgba(16, 185, 129, 0.05), transparent 60%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     }
 
-    /* Ambient glow */
-    .glow {
-      position: absolute;
+    /* Header */
+    header {
+      width: 100%;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(9, 12, 16, 0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
       top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 700px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(11, 15, 25, 0) 70%);
-      pointer-events: none;
-      z-index: 0;
+      z-index: 40;
     }
 
-    /* Nav */
-    nav {
-      position: relative;
-      z-index: 10;
-      max-width: 900px;
+    .nav-container {
+      max-width: 860px;
       margin: 0 auto;
-      padding: 24px 20px;
+      padding: 16px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -62,17 +66,17 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: var(--text);
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: -0.02em;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.01em;
     }
 
     .brand img {
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       object-fit: contain;
     }
 
@@ -85,86 +89,73 @@
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       transition: color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .nav-links a:hover {
       color: var(--text);
     }
 
-    .nav-btn {
-      padding: 7px 14px;
-      background: #1f2937;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .nav-btn:hover {
-      background: var(--card-hover);
-      border-color: #374151;
-    }
-
-    /* Container */
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 780px;
+    /* Main Container */
+    main {
+      max-width: 860px;
+      width: 100%;
       margin: 0 auto;
-      padding: 60px 20px 100px;
+      padding: 72px 28px 96px;
       text-align: center;
+      flex: 1;
     }
 
-    /* Hero */
-    .badge-wrapper {
+    /* Badge */
+    .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 14px;
+      padding: 4px 12px;
       border-radius: 9999px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      color: #34d399;
-      font-size: 13px;
-      font-weight: 600;
+      border: 1px solid var(--border);
+      background: rgba(17, 21, 28, 0.8);
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-muted);
       margin-bottom: 24px;
     }
 
     .badge-dot {
       width: 6px;
       height: 6px;
-      background-color: var(--primary);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--primary);
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     .hero-logo {
-      width: 110px;
-      height: 110px;
+      width: 84px;
+      height: 84px;
       object-fit: contain;
-      margin: 0 auto 20px;
+      margin-bottom: 20px;
       filter: drop-shadow(0 8px 24px rgba(16, 185, 129, 0.2));
     }
 
     h1 {
-      font-size: clamp(32px, 5vw, 44px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
+      font-size: clamp(34px, 5vw, 48px);
+      font-weight: 600;
+      letter-spacing: -0.035em;
       line-height: 1.15;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       color: #ffffff;
     }
 
-    .subtitle {
+    .headline-dim {
+      color: var(--text-muted);
+    }
+
+    p.subtitle {
       font-size: 16px;
       color: var(--text-muted);
       max-width: 580px;
@@ -172,342 +163,539 @@
       line-height: 1.6;
     }
 
-    /* Terminal Install Box */
-    .terminal-card {
+    /* Install Card Component */
+    .install-card {
+      max-width: 680px;
+      margin: 0 auto 16px;
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
       overflow: hidden;
-      margin-bottom: 40px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.08);
       text-align: left;
     }
 
-    .terminal-header {
-      background: rgba(15, 23, 42, 0.6);
-      border-bottom: 1px solid var(--card-border);
-      padding: 10px 16px;
+    .install-footnote {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 48px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .terminal-tabs {
+    .install-footnote a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .install-footnote a:hover {
+      color: var(--accent-light);
+    }
+
+    .install-tabs {
       display: flex;
-      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card-sub);
+      padding: 0 8px;
     }
 
     .tab-btn {
       background: transparent;
       border: none;
+      border-bottom: 2px solid transparent;
       color: var(--text-muted);
+      font-family: inherit;
       font-size: 13px;
       font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 6px;
+      padding: 11px 16px;
       cursor: pointer;
       transition: all 0.15s ease;
     }
 
-    .tab-btn.active {
-      background: #1f293d;
-      color: #ffffff;
-    }
-
-    .tab-btn:hover:not(.active) {
+    .tab-btn:hover {
       color: var(--text);
     }
 
-    .terminal-body {
-      padding: 20px 22px;
+    .tab-btn.active {
+      color: #ffffff;
+      border-bottom-color: var(--accent);
+    }
+
+    .install-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #0b0e14;
+    }
+
+    .cmd-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .cmd-label {
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .cmd-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--code-bg);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      background: #111620;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      transition: border-color 0.15s ease;
     }
 
-    .command-line {
+    .cmd-row:hover {
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .cmd-text-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       overflow-x: auto;
       white-space: nowrap;
       scrollbar-width: none;
+      padding-right: 12px;
+      flex: 1;
     }
 
-    .command-line::-webkit-scrollbar {
+    .cmd-text-wrap::-webkit-scrollbar {
       display: none;
     }
 
-    .prompt-char {
-      color: var(--primary);
+    .prompt-symbol {
+      color: var(--accent);
       user-select: none;
       font-weight: 600;
     }
 
-    .code-text {
+    .cmd-content {
       color: #e2e8f0;
     }
 
-    .copy-btn {
-      background: #1e293b;
-      border: 1px solid #334155;
+    .copy-button {
+      background: #19212d;
+      border: 1px solid var(--border);
       color: var(--text-muted);
       cursor: pointer;
-      padding: 8px 14px;
+      padding: 5px 11px;
       border-radius: 6px;
+      font-family: inherit;
       font-size: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
-      flex-shrink: 0;
-      margin-left: 12px;
-    }
-
-    .copy-btn:hover {
-      background: #334155;
-      color: #ffffff;
-    }
-
-    .copy-btn.copied {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: var(--primary);
-      color: #34d399;
-    }
-
-    /* Actions */
-    .action-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 50px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #0b0f19;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 10px 22px;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    .btn-secondary {
-      background: var(--card-bg);
-      color: var(--text);
       font-weight: 500;
-      font-size: 14px;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: 1px solid var(--card-border);
-      text-decoration: none;
-      transition: all 0.2s ease;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
     }
 
-    .btn-secondary:hover {
-      background: var(--card-hover);
-      border-color: #374151;
+    .copy-button:hover {
+      background: #222c3c;
+      color: #ffffff;
+      border-color: rgba(16, 185, 129, 0.4);
     }
 
-    /* Minimal Quickstart Grid */
-    .grid {
+    .copy-button.copied {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+
+    /* 3 Simple Action Points */
+    .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      margin-bottom: 56px;
       text-align: left;
-      margin-top: 20px;
     }
 
-    .card {
+    .feature-card {
       background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       border-radius: 10px;
       padding: 20px;
-      transition: border-color 0.2s ease;
+      transition: all 0.2s ease;
     }
 
-    .card:hover {
-      border-color: #374151;
+    .feature-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(16, 185, 129, 0.05);
     }
 
-    .card-step {
-      font-family: 'JetBrains Mono', monospace;
+    .feature-step {
+      font-family: 'Geist Mono', monospace;
       font-size: 11px;
-      color: var(--primary);
+      color: var(--accent);
       font-weight: 600;
-      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .feature-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
       margin-bottom: 6px;
     }
 
-    .card h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #ffffff;
-    }
-
-    .card p {
+    .feature-card p {
       font-size: 13px;
       color: var(--text-muted);
       line-height: 1.5;
     }
 
-    .card code {
-      background: var(--code-bg);
+    .feature-card code {
+      background: #0d1117;
+      border: 1px solid var(--border);
       padding: 2px 6px;
       border-radius: 4px;
+      font-family: 'Geist Mono', monospace;
       font-size: 12px;
-      border: 1px solid var(--card-border);
-      color: #38bdf8;
-      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-light);
+    }
+
+    /* CLI Reference / Help Table */
+    .cli-section {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 48px;
+      text-align: left;
+    }
+
+    .cli-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+
+    .cli-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .cli-subtitle {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .cli-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .cli-table th, .cli-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .cli-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cli-table th {
+      background: var(--card-sub);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Geist Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cli-name {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: var(--accent-light);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .cli-alias {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .cli-desc {
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .cli-flags {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
     }
 
     /* Footer */
     footer {
-      border-top: 1px solid var(--card-border);
-      padding: 30px 20px;
+      border-top: 1px solid var(--border-subtle);
+      padding: 28px 24px;
       text-align: center;
-      font-size: 13px;
-      color: var(--text-muted);
+      font-size: 12px;
+      color: var(--text-dim);
     }
 
-    @media (max-width: 640px) {
-      .grid {
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 720px) {
+      .features-grid {
         grid-template-columns: 1fr;
-      }
-      .command-line {
-        font-size: 12px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="glow"></div>
 
-  <nav>
-    <a href="#" class="brand">
-      <img src="assets/leaf.png" alt="Green Profiler">
-      <span>Green Profiler</span>
-    </a>
-    <div class="nav-links">
-      <a href="https://github.com/Haekalss/GreenCode-Profiler" target="_blank" class="nav-btn">
-        <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-        </svg>
-        GitHub
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <img src="assets/leaf.png" alt="Green Profiler">
+        <span>Green Profiler</span>
       </a>
+      <div class="nav-links">
+        <a href="https://github.com/Haekalss/GreenCode-Profiler" target="_blank">
+          GitHub &rarr;
+        </a>
+      </div>
     </div>
-  </nav>
+  </header>
 
-  <div class="container">
-    <div class="badge-wrapper">
+  <main>
+    <div class="hero-badge">
       <span class="badge-dot"></span>
-      Rust Native Architecture v1.8.1
+      <span>v1.8.2 &bull; Rust Native Engine</span>
     </div>
 
     <div>
       <img src="assets/logo.png" alt="Green Profiler Logo" class="hero-logo">
     </div>
 
-    <h1>Green Profiler</h1>
-    <p class="subtitle">Universal Process-Level Energy & Code Quality Profiler for Modern Web Applications. Zero external runtime dependencies.</p>
+    <h1>Instant Software Energy Audit,<br><span class="headline-dim">straight from your terminal.</span></h1>
+    <p class="subtitle">A zero-dependency process-level CPU energy accounting and architectural code quality framework for modern engineering stacks.</p>
 
-    <!-- Terminal Box -->
-    <div class="terminal-card">
-      <div class="terminal-header">
-        <div class="terminal-tabs">
-          <button class="tab-btn active" onclick="switchTab('powershell')">Windows (PowerShell)</button>
-          <button class="tab-btn" onclick="switchTab('bash')">macOS / Linux</button>
-          <button class="tab-btn" onclick="switchTab('npm')">npm</button>
-          <button class="tab-btn" onclick="switchTab('cargo')">Cargo</button>
-        </div>
+    <!-- Install Card (Focal Point) -->
+    <div class="install-card">
+      <div class="install-tabs">
+        <button class="tab-btn active" onclick="switchTab('macos')">macOS</button>
+        <button class="tab-btn" onclick="switchTab('windows')">Windows</button>
+        <button class="tab-btn" onclick="switchTab('linux')">Linux</button>
       </div>
-      <div class="terminal-body">
-        <div class="command-line">
-          <span class="prompt-char">&gt;</span>
-          <span id="cmd-text" class="code-text">irm https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -OutFile gp.zip; Expand-Archive gp.zip -DestinationPath .</span>
-        </div>
-        <button class="copy-btn" id="copy-btn" onclick="copyCommand()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          <span id="copy-text">Copy</span>
-        </button>
+
+      <div class="install-body" id="install-body">
+        <!-- Rendered dynamically -->
       </div>
     </div>
 
-    <!-- Direct actions -->
-    <div class="action-row">
-      <a href="https://github.com/Haekalss/GreenCode-Profiler/releases/latest" class="btn-primary">Download Executable (v1.8.1)</a>
-      <a href="https://github.com/Haekalss/GreenCode-Profiler#readme" class="btn-secondary">Read Documentation</a>
+    <!-- Footnote for manual releases -->
+    <div class="install-footnote">
+      <span>Need offline binaries?</span>
+      <a href="https://github.com/Haekalss/GreenCode-Profiler/releases/latest" target="_blank">
+        Download zip archives from GitHub Releases &rarr;
+      </a>
     </div>
 
-    <!-- Quickstart 3 cards -->
-    <div class="grid">
-      <div class="card">
-        <div class="card-step">01. Initialize</div>
-        <h3>Scan & Configure</h3>
-        <p>Auto-detect web frameworks (Laravel, Next.js, FastAPI, Go, Rust) and generate route targets with <code>greencode init</code>.</p>
+    <!-- 3 Simple Feature Points -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-step">01 / DISCOVERY</div>
+        <h3>Framework Agnostic</h3>
+        <p>Auto-detects routes without limits across Next.js, Laravel, FastAPI, Go, and Axum with <code>greenprofiler init</code>.</p>
       </div>
-      <div class="card">
-        <div class="card-step">02. Profile</div>
-        <h3>Measure Pure CPU Energy</h3>
-        <p>Isolate kernel CPU active time from I/O wait bias to benchmark Joules, kWh, and Carbon emissions via <code>greencode run</code>.</p>
+
+      <div class="feature-card">
+        <div class="feature-step">02 / BENCHMARK</div>
+        <h3>Pure CPU Energy</h3>
+        <p>Isolates kernel execution times from database wait and network I/O bias to measure real Joules &amp; carbon output.</p>
       </div>
-      <div class="card">
-        <div class="card-step">03. Audit</div>
-        <h3>Code Quality & PHP Health</h3>
-        <p>Inspect Cyclomatic Complexity, Maintainability Index, code smells, and OPcache/JIT runtime efficiency.</p>
+
+      <div class="feature-card">
+        <div class="feature-step">03 / AUDIT</div>
+        <h3>Quality &amp; Runtime</h3>
+        <p>Inspects Cyclomatic Complexity, Maintainability Index, code smells, and PHP OPcache/JIT energy impact.</p>
       </div>
     </div>
-  </div>
+
+    <!-- CLI Reference Section -->
+    <div class="cli-section">
+      <div class="cli-header">
+        <div class="cli-title">CLI Commands</div>
+        <div class="cli-subtitle">greenprofiler &lt;cmd&gt; &bull; gp &lt;cmd&gt;</div>
+      </div>
+
+      <table class="cli-table">
+        <thead>
+          <tr>
+            <th style="width: 30%;">Command</th>
+            <th style="width: 70%;">Description &amp; Flags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler init</div>
+              <div class="cli-alias">alias: gp init</div>
+            </td>
+            <td class="cli-desc">
+              Initialize configuration and scan application routes automatically.
+              <div class="cli-flags">[--force] [--filter &lt;k&gt;] [--exclude &lt;k&gt;]</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler run</div>
+              <div class="cli-alias">alias: gp run</div>
+            </td>
+            <td class="cli-desc">
+              Execute full process-level energy profiling and code quality audit.
+              <div class="cli-flags">[config.json] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler analyze</div>
+              <div class="cli-alias">alias: gp analyze</div>
+            </td>
+            <td class="cli-desc">
+              Run static code quality analysis (NCLOC, CCN, MI, Smells) without running server transactions.
+              <div class="cli-flags">[dir] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler routes</div>
+              <div class="cli-alias">alias: gp routes</div>
+            </td>
+            <td class="cli-desc">
+              Discover and display real application endpoints directly from source code.
+              <div class="cli-flags">[dir] [--limit &lt;n&gt;] [--filter &lt;k&gt;] [--exclude &lt;k&gt;]</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler detect</div>
+              <div class="cli-alias">alias: gp detect</div>
+            </td>
+            <td class="cli-desc">Scan and display active web server background processes and their Process IDs (PID).</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler ui</div>
+              <div class="cli-alias">alias: gp ui</div>
+            </td>
+            <td class="cli-desc">Open the latest generated HTML audit report dashboard in your default browser.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 
   <footer>
     <p>Green Profiler &bull; Open Source Green Software Engineering Framework &bull; MIT License</p>
   </footer>
 
   <script>
-    const commands = {
-      powershell: "irm https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -OutFile gp.zip; Expand-Archive gp.zip -DestinationPath .",
-      bash: "curl -fsSL https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -o gp.zip && unzip gp.zip",
-      npm: "npm install -g git+https://github.com/Haekalss/GreenCode-Profiler.git",
-      cargo: "cargo install --git https://github.com/Haekalss/GreenCode-Profiler.git"
+    const data = {
+      macos: [
+        {
+          label: "Terminal (curl)",
+          prompt: "$",
+          cmd: "curl -fsSL https://greenprofiler.github.io/install/install.sh | bash"
+        }
+      ],
+      windows: [
+        {
+          label: "PowerShell",
+          prompt: ">",
+          cmd: "irm https://greenprofiler.github.io/install/install.ps1 | iex"
+        },
+        {
+          label: "Command Prompt (CMD)",
+          prompt: ">",
+          cmd: "curl -fsSL https://greenprofiler.github.io/install/install.cmd -o install.cmd && install.cmd && del install.cmd"
+        }
+      ],
+      linux: [
+        {
+          label: "Terminal (bash)",
+          prompt: "$",
+          cmd: "curl -fsSL https://greenprofiler.github.io/install/install.sh | bash"
+        }
+      ]
     };
+
+    function renderTab(tabKey) {
+      const body = document.getElementById('install-body');
+      const rows = data[tabKey];
+      
+      body.innerHTML = rows.map((item, index) => `
+        <div class="cmd-group">
+          ${rows.length > 1 ? `<span class="cmd-label">${item.label}</span>` : ''}
+          <div class="cmd-row">
+            <div class="cmd-text-wrap">
+              <span class="prompt-symbol">${item.prompt}</span>
+              <span class="cmd-content">${item.cmd}</span>
+            </div>
+            <button class="copy-button" id="copy-btn-${index}" onclick="copyText('${item.cmd}', 'copy-btn-${index}')">Copy</button>
+          </div>
+        </div>
+      `).join('');
+    }
 
     function switchTab(type) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      document.getElementById('cmd-text').innerText = commands[type];
-      
-      const copyBtn = document.getElementById('copy-btn');
-      copyBtn.classList.remove('copied');
-      document.getElementById('copy-text').innerText = 'Copy';
+      event.currentTarget.classList.add('active');
+      renderTab(type);
     }
 
-    function copyCommand() {
-      const text = document.getElementById('cmd-text').innerText;
+    function copyText(text, btnId) {
       navigator.clipboard.writeText(text).then(() => {
-        const copyBtn = document.getElementById('copy-btn');
+        const copyBtn = document.getElementById(btnId);
         copyBtn.classList.add('copied');
-        document.getElementById('copy-text').innerText = 'Copied!';
+        copyBtn.innerText = 'Copied!';
         setTimeout(() => {
           copyBtn.classList.remove('copied');
-          document.getElementById('copy-text').innerText = 'Copy';
+          copyBtn.innerText = 'Copy';
         }, 2000);
       });
     }
+
+    // Initial render
+    renderTab('macos');
   </script>
 </body>
 </html>
