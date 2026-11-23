@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Profiler - Universal Process-Level Energy & Code Quality Profiler</title>
+  <meta name="description" content="High-performance, zero-dependency process-level energy profiler and static code quality analyzer built with Rust Native Architecture.">
+  <link rel="icon" type="image/png" href="assets/leaf.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f293d;
+      --card-hover: #1e293b;
+      --text: #f3f4f6;
+      --text-muted: #94a3b8;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.15);
+      --code-bg: #070b14;
+      --code-border: #1e293b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient glow */
+    .glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(11, 15, 25, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Nav */
+    nav {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .brand img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-btn {
+      padding: 7px 14px;
+      background: #1f2937;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:hover {
+      background: var(--card-hover);
+      border-color: #374151;
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 60px 20px 100px;
+      text-align: center;
+    }
+
+    /* Hero */
+    .badge-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--primary);
+    }
+
+    .hero-logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin: 0 auto 20px;
+      filter: drop-shadow(0 8px 24px rgba(16, 185, 129, 0.2));
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    /* Terminal Install Box */
+    .terminal-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      margin-bottom: 40px;
+      text-align: left;
+    }
+
+    .terminal-header {
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--card-border);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .terminal-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: #1f293d;
+      color: #ffffff;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text);
+    }
+
+    .terminal-body {
+      padding: 20px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--code-bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+    }
+
+    .command-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+
+    .command-line::-webkit-scrollbar {
+      display: none;
+    }
+
+    .prompt-char {
+      color: var(--primary);
+      user-select: none;
+      font-weight: 600;
+    }
+
+    .code-text {
+      color: #e2e8f0;
+    }
+
+    .copy-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+
+    .copy-btn:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+
+    .copy-btn.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--primary);
+      color: #34d399;
+    }
+
+    /* Actions */
+    .action-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #0b0f19;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--card-hover);
+      border-color: #374151;
+    }
+
+    /* Minimal Quickstart Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: #374151;
+    }
+
+    .card-step {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .card code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      border: 1px solid var(--card-border);
+      color: #38bdf8;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 30px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 640px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .command-line {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <nav>
+    <a href="#" class="brand">
+      <img src="assets/leaf.png" alt="Green Profiler">
+      <span>Green Profiler</span>
+    </a>
+    <div class="nav-links">
+      <a href="https://github.com/Haekalss/GreenCode-Profiler" target="_blank" class="nav-btn">
+        <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="badge-wrapper">
+      <span class="badge-dot"></span>
+      Rust Native Architecture v1.8.1
+    </div>
+
+    <div>
+      <img src="assets/logo.png" alt="Green Profiler Logo" class="hero-logo">
+    </div>
+
+    <h1>Green Profiler</h1>
+    <p class="subtitle">Universal Process-Level Energy & Code Quality Profiler for Modern Web Applications. Zero external runtime dependencies.</p>
+
+    <!-- Terminal Box -->
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-tabs">
+          <button class="tab-btn active" onclick="switchTab('powershell')">Windows (PowerShell)</button>
+          <button class="tab-btn" onclick="switchTab('bash')">macOS / Linux</button>
+          <button class="tab-btn" onclick="switchTab('npm')">npm</button>
+          <button class="tab-btn" onclick="switchTab('cargo')">Cargo</button>
+        </div>
+      </div>
+      <div class="terminal-body">
+        <div class="command-line">
+          <span class="prompt-char">&gt;</span>
+          <span id="cmd-text" class="code-text">irm https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -OutFile gp.zip; Expand-Archive gp.zip -DestinationPath .</span>
+        </div>
+        <button class="copy-btn" id="copy-btn" onclick="copyCommand()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Direct actions -->
+    <div class="action-row">
+      <a href="https://github.com/Haekalss/GreenCode-Profiler/releases/latest" class="btn-primary">Download Executable (v1.8.1)</a>
+      <a href="https://github.com/Haekalss/GreenCode-Profiler#readme" class="btn-secondary">Read Documentation</a>
+    </div>
+
+    <!-- Quickstart 3 cards -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-step">01. Initialize</div>
+        <h3>Scan & Configure</h3>
+        <p>Auto-detect web frameworks (Laravel, Next.js, FastAPI, Go, Rust) and generate route targets with <code>greencode init</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-step">02. Profile</div>
+        <h3>Measure Pure CPU Energy</h3>
+        <p>Isolate kernel CPU active time from I/O wait bias to benchmark Joules, kWh, and Carbon emissions via <code>greencode run</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-step">03. Audit</div>
+        <h3>Code Quality & PHP Health</h3>
+        <p>Inspect Cyclomatic Complexity, Maintainability Index, code smells, and OPcache/JIT runtime efficiency.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Green Profiler &bull; Open Source Green Software Engineering Framework &bull; MIT License</p>
+  </footer>
+
+  <script>
+    const commands = {
+      powershell: "irm https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -OutFile gp.zip; Expand-Archive gp.zip -DestinationPath .",
+      bash: "curl -fsSL https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.1-windows-x64.zip -o gp.zip && unzip gp.zip",
+      npm: "npm install -g git+https://github.com/Haekalss/GreenCode-Profiler.git",
+      cargo: "cargo install --git https://github.com/Haekalss/GreenCode-Profiler.git"
+    };
+
+    function switchTab(type) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('cmd-text').innerText = commands[type];
+      
+      const copyBtn = document.getElementById('copy-btn');
+      copyBtn.classList.remove('copied');
+      document.getElementById('copy-text').innerText = 'Copy';
+    }
+
+    function copyCommand() {
+      const text = document.getElementById('cmd-text').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const copyBtn = document.getElementById('copy-btn');
+        copyBtn.classList.add('copied');
+        document.getElementById('copy-text').innerText = 'Copied!';
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          document.getElementById('copy-text').innerText = 'Copy';
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
