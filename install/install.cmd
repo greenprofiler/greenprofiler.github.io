@@ -3,17 +3,17 @@ rem Green Profiler Windows Installer (CMD)
 rem Usage: curl -fsSL https://greenprofiler.github.io/install/install.cmd -o install.cmd && install.cmd && del install.cmd
 
 echo ==========================================================
-echo    Installing Green Profiler CLI (Rust Native Engine)
+echo    Installing Green Profiler CLI v1.9.0 (Rust Engine)
 echo ==========================================================
 
 set "INSTALL_DIR=%USERPROFILE%\.greenprofiler\bin"
 if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
 
-set "ZIP_URL=https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.2-windows-x64.zip"
+set "ZIP_URL=https://github.com/greenprofiler/greenprofiler/releases/latest/download/GreenProfiler-v1.9.0-windows-x64.zip"
 set "TEMP_ZIP=%TEMP%\greenprofiler.zip"
 set "TEMP_DIR=%TEMP%\greenprofiler_extract"
 
-echo [1/3] Downloading Green Profiler...
+echo [1/3] Downloading Green Profiler v1.9.0...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%ZIP_URL%' -OutFile '%TEMP_ZIP%' -UseBasicParsing"
 
 echo [2/3] Extracting archive...
@@ -23,6 +23,6 @@ echo [3/3] Configuring Environment PATH...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$p = [Environment]::GetEnvironmentVariable('Path', 'User'); if ($p -split ';' -notcontains '%INSTALL_DIR%') { [Environment]::SetEnvironmentVariable('Path', $p + ';%INSTALL_DIR%', 'User') }"
 
 echo.
-echo Green Profiler installed successfully to %INSTALL_DIR%!
+echo Green Profiler v1.9.0 installed successfully to %INSTALL_DIR%!
 echo Restart your terminal and run 'greenprofiler' or 'gp' (alias) to begin.
 echo Website: https://greenprofiler.github.io

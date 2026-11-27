@@ -5,7 +5,7 @@
 set -e
 
 echo "=========================================================="
-echo "   Installing Green Profiler CLI (Rust Native Engine)     "
+echo "   Installing Green Profiler CLI v1.9.0 (Rust Engine)     "
 echo "=========================================================="
 
 OS="$(uname -s)"
@@ -13,13 +13,13 @@ ARCH="$(uname -m)"
 
 case "$OS" in
   Linux*)
-    ASSET_NAME="GreenProfiler-v1.8.2-linux-x64.zip"
+    ASSET_NAME="GreenProfiler-v1.9.0-linux-x64.zip"
     ;;
   Darwin*)
     if [ "$ARCH" = "arm64" ]; then
-      ASSET_NAME="GreenProfiler-v1.8.2-darwin-arm64.zip"
+      ASSET_NAME="GreenProfiler-v1.9.0-darwin-arm64.zip"
     else
-      ASSET_NAME="GreenProfiler-v1.8.2-darwin-x64.zip"
+      ASSET_NAME="GreenProfiler-v1.9.0-darwin-x64.zip"
     fi
     ;;
   *)
@@ -31,7 +31,7 @@ esac
 INSTALL_DIR="${HOME}/.greenprofiler/bin"
 mkdir -p "$INSTALL_DIR"
 
-URL="https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/${ASSET_NAME}"
+URL="https://github.com/greenprofiler/greenprofiler/releases/latest/download/${ASSET_NAME}"
 TEMP_ZIP="/tmp/greenprofiler.zip"
 TEMP_DIR="/tmp/greenprofiler_extract"
 
@@ -45,7 +45,6 @@ unzip -q -o "$TEMP_ZIP" -d "$TEMP_DIR"
 
 BIN_PATH=$(find "$TEMP_DIR" -type f -name "greenprofiler" | head -n 1)
 if [ -z "$BIN_PATH" ]; then
-  # Fallback check
   BIN_PATH=$(find "$TEMP_DIR" -type f -name "greenprofiler.exe" | head -n 1)
 fi
 
@@ -62,7 +61,7 @@ rm -f "$TEMP_ZIP"
 rm -rf "$TEMP_DIR"
 
 # Check shell profile for PATH
-SHELL_NAME=$(basename "$SHELL")
+SHELL_NAME=$(basename "${SHELL:-bash}")
 PROFILE_FILE=""
 if [ "$SHELL_NAME" = "zsh" ]; then
   PROFILE_FILE="$HOME/.zshrc"
@@ -80,6 +79,6 @@ if [ -n "$PROFILE_FILE" ] && ! grep -q ".greenprofiler/bin" "$PROFILE_FILE" 2>/d
 fi
 
 echo ""
-echo "Green Profiler v1.8.2 successfully installed to ${INSTALL_DIR}!"
+echo "Green Profiler v1.9.0 successfully installed to ${INSTALL_DIR}!"
 echo "Commands available: 'greenprofiler' or 'gp' (alias)"
 echo "Website: https://greenprofiler.github.io"

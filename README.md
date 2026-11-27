@@ -1,2 +1,3 @@
 # greenprofiler.github.io
-Landing Page untuk Panduan Aplikasi dan Tata Cara Instalasi Menggunakan Croot.js
+
+Official Landing Page, Interactive Scale Simulator Preview, and One-Line CLI Installers for **Green Profiler v1.9.0** ([greenprofiler/greenprofiler](https://github.com/greenprofiler/greenprofiler)).

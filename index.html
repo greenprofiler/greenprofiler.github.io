@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Green Profiler — Process-Level Energy & Code Quality Profiler</title>
-  <meta name="description" content="A zero-config, blazing fast energy and code quality profiler for modern engineering teams.">
+  <title>Green Profiler v1.9.0 — Process-Level Energy, Code Quality & Scale Simulator</title>
+  <meta name="description" content="Zero-dependency Rust profiler for CPU energy accounting, calibrated code quality, Native PHP Extension detection, and multi-user scale simulation.">
   <link rel="icon" type="image/png" href="assets/leaf.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,9 +22,14 @@
       --accent: #10b981;
       --accent-light: #34d399;
       --accent-glow: rgba(16, 185, 129, 0.16);
+      --indigo: #818cf8;
+      --sky: #38bdf8;
+      --amber: #fbbf24;
+      --danger: #f87171;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -35,15 +40,14 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background-image: 
+      background-image:
         radial-gradient(ellipse 70% 45% at 50% 0%, rgba(16, 185, 129, 0.14), transparent 70%),
-        radial-gradient(ellipse 50% 30% at 85% 50%, rgba(16, 185, 129, 0.05), transparent 60%),
+        radial-gradient(ellipse 50% 30% at 85% 50%, rgba(56, 189, 248, 0.05), transparent 60%),
         linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     }
 
-    /* Header */
     header {
       width: 100%;
       border-bottom: 1px solid var(--border-subtle);
@@ -55,7 +59,7 @@
     }
 
     .nav-container {
-      max-width: 860px;
+      max-width: 920px;
       margin: 0 auto;
       padding: 16px 28px;
       display: flex;
@@ -101,25 +105,23 @@
       color: var(--text);
     }
 
-    /* Main Container */
     main {
-      max-width: 860px;
+      max-width: 920px;
       width: 100%;
       margin: 0 auto;
-      padding: 72px 28px 96px;
+      padding: 68px 28px 96px;
       text-align: center;
       flex: 1;
     }
 
-    /* Badge */
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 9999px;
       border: 1px solid var(--border);
-      background: rgba(17, 21, 28, 0.8);
+      background: rgba(17, 21, 28, 0.85);
       font-size: 12px;
       font-family: 'Geist Mono', monospace;
       color: var(--text-muted);
@@ -134,12 +136,17 @@
       box-shadow: 0 0 8px var(--accent);
     }
 
+    .badge-new {
+      color: var(--accent-light);
+      font-weight: 600;
+    }
+
     .hero-logo {
       width: 84px;
       height: 84px;
       object-fit: contain;
       margin-bottom: 20px;
-      filter: drop-shadow(0 8px 24px rgba(16, 185, 129, 0.2));
+      filter: drop-shadow(0 8px 24px rgba(16, 185, 129, 0.22));
     }
 
     h1 {
@@ -158,14 +165,14 @@
     p.subtitle {
       font-size: 16px;
       color: var(--text-muted);
-      max-width: 580px;
+      max-width: 650px;
       margin: 0 auto 36px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    /* Install Card Component */
+    /* Install Card */
     .install-card {
-      max-width: 680px;
+      max-width: 700px;
       margin: 0 auto 16px;
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -178,11 +185,12 @@
     .install-footnote {
       font-size: 13px;
       color: var(--text-dim);
-      margin-bottom: 48px;
+      margin-bottom: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
+      flex-wrap: wrap;
     }
 
     .install-footnote a {
@@ -218,9 +226,7 @@
       transition: all 0.15s ease;
     }
 
-    .tab-btn:hover {
-      color: var(--text);
-    }
+    .tab-btn:hover { color: var(--text); }
 
     .tab-btn.active {
       color: #ffffff;
@@ -262,9 +268,7 @@
       transition: border-color 0.15s ease;
     }
 
-    .cmd-row:hover {
-      border-color: rgba(16, 185, 129, 0.35);
-    }
+    .cmd-row:hover { border-color: rgba(16, 185, 129, 0.35); }
 
     .cmd-text-wrap {
       display: flex;
@@ -277,9 +281,7 @@
       flex: 1;
     }
 
-    .cmd-text-wrap::-webkit-scrollbar {
-      display: none;
-    }
+    .cmd-text-wrap::-webkit-scrollbar { display: none; }
 
     .prompt-symbol {
       color: var(--accent);
@@ -287,9 +289,7 @@
       font-weight: 600;
     }
 
-    .cmd-content {
-      color: #e2e8f0;
-    }
+    .cmd-content { color: #e2e8f0; }
 
     .copy-button {
       background: #19212d;
@@ -317,12 +317,41 @@
       color: var(--accent-light);
     }
 
-    /* 3 Simple Action Points */
+    /* Section Headings */
+    .section-block {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 48px;
+      margin-top: 48px;
+      text-align: left;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .section-subtitle {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 6 Feature Cards */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 56px;
       text-align: left;
     }
 
@@ -335,7 +364,7 @@
     }
 
     .feature-card:hover {
-      border-color: rgba(16, 185, 129, 0.3);
+      border-color: rgba(16, 185, 129, 0.32);
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(16, 185, 129, 0.05);
     }
@@ -346,6 +375,19 @@
       color: var(--accent);
       font-weight: 600;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pill-new {
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-light);
+      padding: 1px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      letter-spacing: 0.03em;
     }
 
     .feature-card h3 {
@@ -358,46 +400,132 @@
     .feature-card p {
       font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .feature-card code {
       background: #0d1117;
       border: 1px solid var(--border);
-      padding: 2px 6px;
+      padding: 1px 6px;
       border-radius: 4px;
       font-family: 'Geist Mono', monospace;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--accent-light);
     }
 
-    /* CLI Reference / Help Table */
-    .cli-section {
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 48px;
-      text-align: left;
+    /* Interactive Scale Simulator Card */
+    .sim-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.55);
     }
 
-    .cli-header {
+    .sim-controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .sim-field label {
+      display: block;
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .sim-field input[type="number"] {
+      width: 100%;
+      background: var(--card-sub);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #ffffff;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .sim-field input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    .sim-toggle {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(129, 140, 248, 0.1);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      border-radius: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+      font-weight: 500;
+      color: #c7d2fe;
+    }
+
+    .sim-toggle input {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .sim-metrics {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .sim-stat {
+      background: var(--card-sub);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .sim-stat-lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sim-stat-val {
+      font-family: 'Geist Mono', monospace;
+      font-size: 17px;
+      font-weight: 600;
+      margin-top: 6px;
+      color: #ffffff;
+    }
+
+    .sim-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-dim);
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .cli-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #ffffff;
-      letter-spacing: -0.01em;
-    }
-
-    .cli-subtitle {
+    .sim-note code {
       font-family: 'Geist Mono', monospace;
-      font-size: 12px;
-      color: var(--text-muted);
+      color: var(--accent-light);
     }
 
+    /* CLI Table */
     .cli-table {
       width: 100%;
       border-collapse: collapse;
@@ -409,14 +537,12 @@
     }
 
     .cli-table th, .cli-table td {
-      padding: 12px 16px;
+      padding: 13px 16px;
       border-bottom: 1px solid var(--border-subtle);
       vertical-align: top;
     }
 
-    .cli-table tr:last-child td {
-      border-bottom: none;
-    }
+    .cli-table tr:last-child td { border-bottom: none; }
 
     .cli-table th {
       background: var(--card-sub);
@@ -440,6 +566,7 @@
       font-size: 11px;
       color: var(--text-muted);
       margin-top: 2px;
+      font-family: 'Geist Mono', monospace;
     }
 
     .cli-desc {
@@ -454,7 +581,6 @@
       margin-top: 4px;
     }
 
-    /* Footer */
     footer {
       border-top: 1px solid var(--border-subtle);
       padding: 28px 24px;
@@ -468,14 +594,19 @@
       text-decoration: none;
     }
 
-    footer a:hover {
-      color: var(--text);
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 820px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .sim-controls { grid-template-columns: repeat(2, 1fr); }
+      .sim-metrics { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 720px) {
-      .features-grid {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .sim-controls { grid-template-columns: 1fr; }
+      .sim-metrics { grid-template-columns: 1fr; }
+      .nav-links { gap: 14px; }
     }
   </style>
 </head>
@@ -488,7 +619,10 @@
         <span>Green Profiler</span>
       </a>
       <div class="nav-links">
-        <a href="https://github.com/Haekalss/GreenCode-Profiler" target="_blank">
+        <a href="#features">Features</a>
+        <a href="#simulator">Simulator</a>
+        <a href="#cli">CLI</a>
+        <a href="https://github.com/greenprofiler/greenprofiler" target="_blank" rel="noopener">
           GitHub &rarr;
         </a>
       </div>
@@ -498,70 +632,143 @@
   <main>
     <div class="hero-badge">
       <span class="badge-dot"></span>
-      <span>v1.8.2 &bull; Rust Native Engine</span>
+      <span><span class="badge-new">v1.9.0</span> &bull; Rust Native Engine &bull; Scale Simulator + PHP Ext Detector</span>
     </div>
 
     <div>
       <img src="assets/logo.png" alt="Green Profiler Logo" class="hero-logo">
     </div>
 
-    <h1>Instant Software Energy Audit,<br><span class="headline-dim">straight from your terminal.</span></h1>
-    <p class="subtitle">A zero-dependency process-level CPU energy accounting and architectural code quality framework for modern engineering stacks.</p>
+    <h1>Instant Software Energy Audit,<br><span class="headline-dim">from single request to 50,000 users.</span></h1>
+    <p class="subtitle">Zero-dependency process-level CPU energy accounting, calibrated code architecture analysis, Native PHP Extension hotspot detection, and multi-user capacity simulation.</p>
 
-    <!-- Install Card (Focal Point) -->
+    <!-- Install Card -->
     <div class="install-card">
       <div class="install-tabs">
-        <button class="tab-btn active" onclick="switchTab('macos')">macOS</button>
-        <button class="tab-btn" onclick="switchTab('windows')">Windows</button>
-        <button class="tab-btn" onclick="switchTab('linux')">Linux</button>
+        <button class="tab-btn active" onclick="switchTab('macos', this)">macOS</button>
+        <button class="tab-btn" onclick="switchTab('windows', this)">Windows</button>
+        <button class="tab-btn" onclick="switchTab('linux', this)">Linux</button>
       </div>
 
-      <div class="install-body" id="install-body">
-        <!-- Rendered dynamically -->
-      </div>
+      <div class="install-body" id="install-body"></div>
     </div>
 
     <!-- Footnote for manual releases -->
     <div class="install-footnote">
-      <span>Need offline binaries?</span>
-      <a href="https://github.com/Haekalss/GreenCode-Profiler/releases/latest" target="_blank">
-        Download zip archives from GitHub Releases &rarr;
+      <span>Need standalone offline binaries?</span>
+      <a href="https://github.com/greenprofiler/greenprofiler/releases/latest" target="_blank" rel="noopener">
+        Download v1.9.0 zip archives from GitHub Releases &rarr;
       </a>
     </div>
 
-    <!-- 3 Simple Feature Points -->
-    <div class="features-grid">
+    <!-- 6 Core Capabilities -->
+    <div id="features" class="features-grid">
       <div class="feature-card">
-        <div class="feature-step">01 / DISCOVERY</div>
+        <div class="feature-step"><span>01 / DISCOVERY</span></div>
         <h3>Framework Agnostic</h3>
-        <p>Auto-detects routes without limits across Next.js, Laravel, FastAPI, Go, and Axum with <code>greenprofiler init</code>.</p>
+        <p>Auto-discovers routes across Next.js, Laravel, FastAPI, Gin/Fiber, and Actix/Axum into <code>greenprofiler.json</code>.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-step">02 / BENCHMARK</div>
-        <h3>Pure CPU Energy</h3>
-        <p>Isolates kernel execution times from database wait and network I/O bias to measure real Joules &amp; carbon output.</p>
+        <div class="feature-step"><span>02 / BENCHMARK</span></div>
+        <h3>Pure Kernel CPU Energy</h3>
+        <p>Isolates real CPU execution cycles from database and network I/O wait bias to compute accurate Joules &amp; gCO2e.</p>
       </div>
 
       <div class="feature-card">
-        <div class="feature-step">03 / AUDIT</div>
-        <h3>Quality &amp; Runtime</h3>
-        <p>Inspects Cyclomatic Complexity, Maintainability Index, code smells, and PHP OPcache/JIT energy impact.</p>
+        <div class="feature-step"><span>03 / CALIBRATED QUALITY</span><span class="pill-new">v1.9</span></div>
+        <h3>Pragmatic + Research Rules</h3>
+        <p>Adaptive NCLOC limits (<code>&le;300</code> Backend, <code>&le;450</code> TSX/JSX UI) &amp; pure control-flow nesting, plus <code>--strict</code> mode.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-step"><span>04 / NATIVE OFFLOAD</span><span class="pill-new">v1.9</span></div>
+        <h3>PHP Extension Candidates</h3>
+        <p>Detects hot-loop &amp; repeatedly invoked PHP functions, recommending Rust <code>ext-php-rs</code> / C Zend compilation (40–75% CPU savings).</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-step"><span>05 / SCALE PROJECTION</span><span class="pill-new">v1.9</span></div>
+        <h3>Multi-User Load Simulator</h3>
+        <p>Projects RPS, vCPU saturation, P95 queueing latency, monthly kWh, and carbon impact across concurrent user tiers.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-step"><span>06 / OFFLINE DASHBOARDS</span></div>
+        <h3>Zero-Dependency Reports</h3>
+        <p>Generates self-contained HTML &amp; JSON audit reports with embedded interactive multi-user calculators.</p>
+      </div>
+    </div>
+
+    <!-- Interactive Simulator Preview -->
+    <div id="simulator" class="section-block">
+      <div class="section-header">
+        <div class="section-title">Interactive Multi-User Scale Simulator</div>
+        <div class="section-subtitle">greenprofiler simulate &bull; Embedded in every v1.9 HTML report</div>
+      </div>
+
+      <div class="sim-card">
+        <div class="sim-controls">
+          <div class="sim-field">
+            <label for="simUsers">Concurrent Users</label>
+            <input id="simUsers" type="number" min="1" max="500000" value="2500" oninput="updateSimPreview()">
+          </div>
+          <div class="sim-field">
+            <label for="simRpu">Requests / User (60s)</label>
+            <input id="simRpu" type="number" min="1" max="500" value="10" oninput="updateSimPreview()">
+          </div>
+          <div class="sim-field">
+            <label for="simCores">Server Cores (vCPU)</label>
+            <input id="simCores" type="number" min="1" max="256" value="8" oninput="updateSimPreview()">
+          </div>
+          <label class="sim-toggle">
+            <input id="simOpt" type="checkbox" onchange="updateSimPreview()">
+            <span>PHP Ext + OPcache (-45%)</span>
+          </label>
+        </div>
+
+        <div class="sim-metrics">
+          <div class="sim-stat">
+            <div class="sim-stat-lbl">Throughput</div>
+            <div id="outRps" class="sim-stat-val">-</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-lbl">vCPU Utilization</div>
+            <div id="outCpu" class="sim-stat-val">-</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-lbl">Projected P95</div>
+            <div id="outLat" class="sim-stat-val">-</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-lbl">Monthly Energy</div>
+            <div id="outKwh" class="sim-stat-val" style="color: var(--accent-light);">-</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-lbl">Monthly Carbon</div>
+            <div id="outCo2" class="sim-stat-val" style="color: var(--indigo);">-</div>
+          </div>
+        </div>
+
+        <div class="sim-note">
+          <span>Sample baseline: 0.28 J/req &bull; 15 ms active CPU &bull; 32 ms base latency (8 peak hrs/day)</span>
+          <span>Run on your own audit: <code>greenprofiler simulate --users 2500 --cores 8</code></span>
+        </div>
       </div>
     </div>
 
     <!-- CLI Reference Section -->
-    <div class="cli-section">
-      <div class="cli-header">
-        <div class="cli-title">CLI Commands</div>
-        <div class="cli-subtitle">greenprofiler &lt;cmd&gt; &bull; gp &lt;cmd&gt;</div>
+    <div id="cli" class="section-block">
+      <div class="section-header">
+        <div class="section-title">CLI Commands</div>
+        <div class="section-subtitle">greenprofiler &lt;cmd&gt; &bull; gp &lt;cmd&gt;</div>
       </div>
 
       <table class="cli-table">
         <thead>
           <tr>
-            <th style="width: 30%;">Command</th>
-            <th style="width: 70%;">Description &amp; Flags</th>
+            <th style="width: 32%;">Command</th>
+            <th style="width: 68%;">Description &amp; Flags</th>
           </tr>
         </thead>
         <tbody>
@@ -571,7 +778,7 @@
               <div class="cli-alias">alias: gp init</div>
             </td>
             <td class="cli-desc">
-              Initialize configuration and scan application routes automatically.
+              Generate <code>greenprofiler.json</code> and discover application routes automatically.
               <div class="cli-flags">[--force] [--filter &lt;k&gt;] [--exclude &lt;k&gt;]</div>
             </td>
           </tr>
@@ -581,8 +788,8 @@
               <div class="cli-alias">alias: gp run</div>
             </td>
             <td class="cli-desc">
-              Execute full process-level energy profiling and code quality audit.
-              <div class="cli-flags">[config.json] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
+              Execute process-level CPU energy profiling, calibrated code audit, and multi-user simulation.
+              <div class="cli-flags">[greenprofiler.json] [--strict] [--users &lt;n&gt;] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
             </td>
           </tr>
           <tr>
@@ -591,8 +798,18 @@
               <div class="cli-alias">alias: gp analyze</div>
             </td>
             <td class="cli-desc">
-              Run static code quality analysis (NCLOC, CCN, MI, Smells) without running server transactions.
-              <div class="cli-flags">[dir] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
+              Run calibrated static code quality inspection (NCLOC, CCN, MI, Control-Flow Smells) &amp; Native PHP Extension candidate detection.
+              <div class="cli-flags">[dir] [--strict] [--users &lt;n&gt;] [--no-open] [--filter &lt;k&gt;] [--exclude &lt;k&gt;] [--output &lt;path&gt;]</div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cli-name">greenprofiler simulate</div>
+              <div class="cli-alias">alias: gp simulate &bull; gp sim</div>
+            </td>
+            <td class="cli-desc">
+              Simulate multi-user concurrency load, CPU core saturation, P95 queueing latency, monthly kWh, and CO2e from existing audit JSON.
+              <div class="cli-flags">[report.json] [--users &lt;n&gt;] [--rpu &lt;n&gt;] [--cores &lt;c&gt;] [--window &lt;sec&gt;] [--no-open] [--output &lt;path&gt;]</div>
             </td>
           </tr>
           <tr>
@@ -601,7 +818,7 @@
               <div class="cli-alias">alias: gp routes</div>
             </td>
             <td class="cli-desc">
-              Discover and display real application endpoints directly from source code.
+              Discover and list application endpoints directly from source code across fullstack monorepos.
               <div class="cli-flags">[dir] [--limit &lt;n&gt;] [--filter &lt;k&gt;] [--exclude &lt;k&gt;]</div>
             </td>
           </tr>
@@ -610,14 +827,14 @@
               <div class="cli-name">greenprofiler detect</div>
               <div class="cli-alias">alias: gp detect</div>
             </td>
-            <td class="cli-desc">Scan and display active web server background processes and their Process IDs (PID).</td>
+            <td class="cli-desc">Audit PHP Green Extensions (OPcache, JIT, Xdebug) and scan active server PIDs.</td>
           </tr>
           <tr>
             <td>
               <div class="cli-name">greenprofiler ui</div>
               <div class="cli-alias">alias: gp ui</div>
             </td>
-            <td class="cli-desc">Open the latest generated HTML audit report dashboard in your default browser.</td>
+            <td class="cli-desc">Open the latest generated HTML audit or simulation dashboard in your default browser.</td>
           </tr>
         </tbody>
       </table>
@@ -625,7 +842,7 @@
   </main>
 
   <footer>
-    <p>Green Profiler &bull; Open Source Green Software Engineering Framework &bull; MIT License</p>
+    <p>Green Profiler v1.9.0 &bull; <a href="https://github.com/greenprofiler/greenprofiler" target="_blank" rel="noopener">github.com/greenprofiler/greenprofiler</a> &bull; MIT License</p>
   </footer>
 
   <script>
@@ -661,7 +878,7 @@
     function renderTab(tabKey) {
       const body = document.getElementById('install-body');
       const rows = data[tabKey];
-      
+
       body.innerHTML = rows.map((item, index) => `
         <div class="cmd-group">
           ${rows.length > 1 ? `<span class="cmd-label">${item.label}</span>` : ''}
@@ -676,9 +893,9 @@
       `).join('');
     }
 
-    function switchTab(type) {
+    function switchTab(type, btnEl) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
       renderTab(type);
     }
 
@@ -694,8 +911,41 @@
       });
     }
 
-    // Initial render
+    function updateSimPreview() {
+      const users = Math.max(1, parseFloat(document.getElementById('simUsers').value) || 1);
+      const rpu = Math.max(1, parseFloat(document.getElementById('simRpu').value) || 1);
+      const cores = Math.max(1, parseFloat(document.getElementById('simCores').value) || 1);
+      const opt = document.getElementById('simOpt').checked;
+
+      const factor = opt ? 0.55 : 1.0;
+      const eReq = 0.28 * factor;
+      const cpuReq = 0.015 * factor;
+      const baseLat = 32.0 * (opt ? 0.72 : 1.0);
+      const win = 60.0;
+
+      const totalReqs = users * rpu;
+      const rps = totalReqs / win;
+      const rho = (rps * cpuReq) / cores;
+      const utilPct = rho * 100.0;
+      const p95 = rho < 0.98
+        ? baseLat * (1.25 + (rho * rho) / (2.0 * (1.0 - rho)))
+        : baseLat * (25.0 + (rho - 0.98) * 120.0);
+
+      const windowsPerDay = (8.0 * 3600.0) / win;
+      const monthlyKwh = ((totalReqs * eReq * windowsPerDay) / 3600000.0) * 30.0;
+      const monthlyCo2 = (monthlyKwh * 850.0) / 1000.0;
+
+      document.getElementById('outRps').textContent = rps.toFixed(1) + ' req/s';
+      const cpuEl = document.getElementById('outCpu');
+      cpuEl.textContent = utilPct.toFixed(1) + '%';
+      cpuEl.style.color = utilPct <= 75 ? '#34d399' : (utilPct <= 100 ? '#fbbf24' : '#f87171');
+      document.getElementById('outLat').textContent = p95.toFixed(1) + ' ms';
+      document.getElementById('outKwh').textContent = monthlyKwh.toFixed(2) + ' kWh';
+      document.getElementById('outCo2').textContent = monthlyCo2.toFixed(2) + ' kg';
+    }
+
     renderTab('macos');
+    updateSimPreview();
   </script>
 </body>
 </html>

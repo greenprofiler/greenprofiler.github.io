@@ -4,7 +4,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "==========================================================" -ForegroundColor Green
-Write-Host "   Installing Green Profiler CLI (Rust Native Engine)     " -ForegroundColor Green
+Write-Host "   Installing Green Profiler CLI v1.9.0 (Rust Engine)     " -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Green
 
 $installDir = "$HOME\.greenprofiler\bin"
@@ -12,11 +12,11 @@ if (-not (Test-Path $installDir)) {
     New-Item -ItemType Directory -Path $installDir -Force | Out-Null
 }
 
-$zipUrl = "https://github.com/Haekalss/GreenCode-Profiler/releases/latest/download/GreenProfiler-v1.8.2-windows-x64.zip"
+$zipUrl = "https://github.com/greenprofiler/greenprofiler/releases/latest/download/GreenProfiler-v1.9.0-windows-x64.zip"
 $tempZip = "$env:TEMP\greenprofiler.zip"
 $tempExtract = "$env:TEMP\greenprofiler_extract"
 
-Write-Host "-> Downloading latest Green Profiler release..." -ForegroundColor Cyan
+Write-Host "-> Downloading Green Profiler v1.9.0 release..." -ForegroundColor Cyan
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 Invoke-WebRequest -Uri $zipUrl -OutFile $tempZip -UseBasicParsing
 
@@ -46,6 +46,6 @@ if ($userPath -split ';' -notcontains $installDir) {
 }
 
 Write-Host ""
-Write-Host "Green Profiler v1.8.2 successfully installed to: $installDir" -ForegroundColor Green
-Write-Host "Commands available: 'greenprofiler' or 'gp' (alias)" -ForegroundColor Cyan
+Write-Host "Green Profiler v1.9.0 successfully installed to: $installDir" -ForegroundColor Green
+Write-Host "Commands available: 'greenprofiler' or 'gp.exe' (CMD/Bash alias: 'gp')" -ForegroundColor Cyan
 Write-Host "Website: https://greenprofiler.github.io" -ForegroundColor Gray
